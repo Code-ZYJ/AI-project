@@ -180,3 +180,5 @@ def eval(threshold=0.5):   #这个用gpu跑不了，cpu要11个小时
     plt.ylabel('TPR')
     plt.xlabel('FPR')
     plt.show()
+
+eval()
