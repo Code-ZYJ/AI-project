@@ -31,9 +31,10 @@ len_test = [len(str(test_df['Reviews'][i]).split()) for i in range(len(test_df))
 sns.set();plt.figure(figsize=(12,7))
 plt.subplot(121); sns.distplot(len_train); plt.xlim(0,1200); plt.title("len of train's words")
 plt.subplot(122); sns.distplot(len_test); plt.xlim(0,1200); plt.title("len of test's words")
-print(0.5*(np.mean(np.array(len_train)<800)+np.mean(np.array(len_test)<800)))
-#当每句话的长度设置为 800 的时候，涵盖了 98.108% 的数据，这对我们来说足够了。
-max_len = 800
+max_len = 400
+print(0.5*(np.mean(np.array(len_train)<max_len)+np.mean(np.array(len_test)<max_len)))
+#当每句话的长度设置为 500 的时候，涵盖了 91.88% 的数据
+
 
 #载入 tokenizer 标注器 和 bert 模型
 PRETRAINED_MODEL_NAME = 'bert-base-uncased'
@@ -67,35 +68,26 @@ test_inputs,test_token_typeids,test_attenmask,test_labels = preprocessing(test_d
 
 # 制作 Dataloader
 train_data = TensorDataset(train_inputs, train_token_typeids, train_attenmask, train_labels)
-train_dataloader = DataLoader(train_data, shuffle=True, batch_size=4,drop_last=True)
+train_dataloader = DataLoader(train_data, shuffle=True, batch_size=1,drop_last=True)
 test_data = TensorDataset(test_inputs, test_token_typeids, test_attenmask, test_labels)
-test_dataloader = DataLoader(test_data, shuffle=True, batch_size=4,drop_last=True)
+test_dataloader = DataLoader(test_data, shuffle=True, batch_size=1,drop_last=True)
 
 
 #%% 定义模型
 class Sentiment_cla(nn.Module):
     def __init__(self):
         super(Sentiment_cla, self).__init__()
-        self.bert1 = AutoModel.from_pretrained(PRETRAINED_MODEL_NAME)
-        self.bert2 = AutoModel.from_pretrained(PRETRAINED_MODEL_NAME)
-        self.dropout = nn.Dropout(0.4)
-        self.linear = nn.Linear(self.bert1.config.hidden_size*2,1)   # 2分类
+        self.bert = AutoModel.from_pretrained(PRETRAINED_MODEL_NAME)
+        self.linear = nn.Linear(self.bert.config.hidden_size,1)   # 2分类
 
     def forward(self, input_ids, token_typeids, attention_mask):
-        input_ids1, input_ids2 = input_ids[:,:512], input_ids[:,512:]
-        tokenids1, tokenids2 = token_typeids[:, :512], token_typeids[:, 512:]
-        atten1, atten2 = attention_mask[:,:512], attention_mask[:,512:]
-        out1 = self.bert1(input_ids1, tokenids1, atten1)
-        out2 = self.bert2(input_ids2, tokenids2, atten2)
-        pooler_out = torch.cat((out1[1],out2[1]),dim=-1)
-        pooler_out = self.dropout(pooler_out)
-        logits = self.linear(pooler_out)
+        pooler_out = self.bert(input_ids, token_typeids, attention_mask)
+        logits = self.linear(pooler_out[1])
         return F.sigmoid(logits)
 
 
-
 #%% 模型训练
-EPOCHS = 5
+EPOCHS = 1
 cla = Sentiment_cla().to(device)
 loss_fn = nn.BCELoss()
 optim = torch.optim.RMSprop(cla.parameters(),lr =2e-5)
