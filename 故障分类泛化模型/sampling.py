@@ -4,7 +4,7 @@ import torch
 '''
 使用前确保最后一维为采样的维度
 '''
-def sampling(data, size=1024):
+def sampling(data, size=1500):
     data = torch.from_numpy(data).type(torch.float)
     out = nn.Upsample(size=size)(data)
     out = np.array(out)
