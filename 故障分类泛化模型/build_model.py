@@ -7,8 +7,8 @@ import torch.utils.data as Data
 
 
 #%% Transformer Parameters
-src_vocab_size = 6000   #词表大小
-tgt_vocab_size = 6000   #目标词表大小
+src_vocab_size = 7000   #词表大小
+tgt_vocab_size = 7000   #目标词表大小
 
 d_model = 16  # Embedding Size
 d_ff = 64  # FeedForward dimension
@@ -101,8 +101,7 @@ class MultiHeadAttention(nn.Module):
         # (B, S, D) -proj-> (B, S, D_new) -split-> (B, S, H, W) -trans-> (B, H, S, W)
         Q = self.W_Q(input_Q).view(batch_size, -1, n_heads, d_k).transpose(1, 2)  # Q: [batch_size, n_heads, len_q, d_k]
         K = self.W_K(input_K).view(batch_size, -1, n_heads, d_k).transpose(1, 2)  # K: [batch_size, n_heads, len_k, d_k]
-        V = self.W_V(input_V).view(batch_size, -1, n_heads, d_v).transpose(1,
-                                                                           2)  # V: [batch_size, n_heads, len_v(=len_k), d_v]
+        V = self.W_V(input_V).view(batch_size, -1, n_heads, d_v).transpose(1, 2)  # V: [batch_size, n_heads, len_v(=len_k), d_v]
 
         attn_mask = attn_mask.unsqueeze(1).repeat(1, n_heads, 1,
                                                   1)  # attn_mask : [batch_size, n_heads, seq_len, seq_len]
@@ -173,7 +172,9 @@ class Encoder(nn.Module):
         return enc_outputs, enc_self_attn
 
 #%% 测试
-model = Encoder().cuda()
-enc_inputs = torch.randn(4,3000).type(torch.LongTensor).cuda()+10
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+model = Encoder().to(device)
+enc_inputs = torch.randn(4,1000).type(torch.LongTensor).to(device)+10
 
 enc_outputs,enc_self_attn=model(enc_inputs)

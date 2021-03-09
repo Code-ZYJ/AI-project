@@ -14,3 +14,6 @@ if __name__=='__main__':
     data = np.random.random((1,3,5006))
     sampling(data).shape
 
+
+
+
