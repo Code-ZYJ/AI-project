@@ -22,7 +22,7 @@
   这个主要是我用于练习`pytorch`的一个小练手，项目中做了`Label-Encoding`等预处理，以及一些可视化操作。
 3. [螺母螺栓参评质量检测](https://github.com/Code-ZYJ/AI-project/tree/main/%E7%AB%9E%E8%B5%9B/%E8%9E%BA%E6%AF%8D%E8%9E%BA%E6%A0%93%E5%8F%82%E8%AF%84%E8%B4%A8%E9%87%8F%E6%A3%80%E6%B5%8B)  
   这个项目时对螺母螺栓图片的二分类。我用`VGG19`的卷积基做迁移学习省时省力，效果还不错。  
-4. NLP中文预训练模型泛化能力挑战赛  
+4. [NLP中文预训练模型泛化能力挑战赛](https://github.com/Code-ZYJ/AI-project/tree/main/%E7%AB%9E%E8%B5%9B/%E5%A4%A9%E6%B1%A0%E6%B3%9B%E5%8C%96%E6%A8%A1%E5%9E%8B%E9%A2%84%E8%AE%AD%E7%BB%83)  
   详细内容正在完善中······
   
 ### NLP相关  
