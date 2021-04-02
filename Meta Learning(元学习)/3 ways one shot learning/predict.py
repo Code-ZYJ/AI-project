@@ -12,7 +12,7 @@ data =torch.from_numpy(data)
 
 def predict(path):
     img = imread(path)
-    img = resize(img,(200,200)).transpose((2,1,0))
+    img = resize(img,(200,200)).transpose((2,0,1))
     input = torch.from_numpy(img * 255).type(torch.float32).unsqueeze(dim=0).to(device)
     net.eval()
     score1 = net(input, data[0].unsqueeze(dim=0).to(device))   # ml

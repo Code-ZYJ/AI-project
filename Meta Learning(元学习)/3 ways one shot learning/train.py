@@ -38,12 +38,12 @@ class Siamese_network(nn.Module):
                              nn.Conv2d(32,4,5,padding=(2,2)),
                              nn.Tanh(),
                              nn.MaxPool2d(2),
-                             nn.Dropout(0.1),
+                             nn.Dropout(0.03),
                              nn.Flatten())
-        self.linear = nn.Sequential(nn.Dropout(0.5),
+        self.linear = nn.Sequential(nn.Dropout(0.6),
                                     nn.Linear(50*50*4,512),
                                     nn.Tanh(),
-                                    nn.Dropout(0.5),
+                                    nn.Dropout(0.6),
                                     nn.Linear(512,1))
         self.out = nn.Sigmoid()
     def forward(self,img1,img2):
@@ -54,7 +54,7 @@ class Siamese_network(nn.Module):
         return out
 
 #%% 训练
-epochs = 700
+epochs = 900
 model = Siamese_network().to(device)
 loss_fn = nn.BCELoss()
 optim = torch.optim.Adam(model.parameters(),lr=1e-3)
@@ -73,6 +73,7 @@ for epoch in tqdm(range(epochs)):
 
 
 #%% 预测
+model.eval()
 print(model(ml.to(device),ma.to(device)))
 print(model(ma.to(device),dl.to(device)))
 print(model(ml.to(device),dl.to(device)))
