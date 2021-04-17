@@ -38,3 +38,6 @@
   英语->中文 的翻译。从原始语料的整理，构建词表，word2vec的训练(代替embedding)再到模型的搭建和训练。虽然最后的结果不太好，个人觉得原因在于同步的seq2seq模型对于翻译而言还是不够给力，另外训练过程中在`Deocder`部分中我没有给定`dec_input`导致训练难拟合，这也是在意料之中。
 5. [seq2seq(Attention)](https://github.com/Code-ZYJ/AI-project/tree/main/seq2seq(Attention)%20%E5%BE%B7%E8%AF%AD---%E3%80%8B%E8%8B%B1%E8%AF%AD)  
   对异步序列到序列模型的整体流程，由内到外，由表及里进行了全面的剖析，从各分模型的输入输出，到各模型的内部数据流，再到训练异步训练过程给出了[详细的解析](https://mp.weixin.qq.com/s?__biz=Mzg5ODU1NDQ3OQ==&mid=2247483781&idx=1&sn=bbfef8670ce24b3c271003dc71ea3641&chksm=c0618e85f7160793cf7b6e855161ca8ddc95120f0c1c1e6968b9c7e5338c03d128b92475ba84&token=1138451613&lang=zh_CN#rd)  
+  
+### [小样本](https://github.com/Code-ZYJ/AI-project/tree/main/Meta%20Learning(%E5%85%83%E5%AD%A6%E4%B9%A0)/3%20ways%20one%20shot%20learning)  
+1. 待完善……
