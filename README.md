@@ -13,7 +13,7 @@
 2. [故障类型及程度诊断](https://github.com/Code-ZYJ/AI-project/tree/main/%E6%95%85%E9%9A%9C%E7%B1%BB%E5%9E%8B%E5%8F%8A%E7%A8%8B%E5%BA%A6%E8%AF%8A%E6%96%AD)  
   这是一篇在读研期间比较早期的研究。目的是诊断变压器绕组的故障类型与故障程度。在故障分类上采用了`决策树`；在故障程度诊断上我利用`Tensorflow`搭建了单隐含层的神经网络模型。调参后在训练集上拟合良好。为抑制过拟合现象，我设置了`Dropout`与`L2正则化`。`回调函数`设置了动态学习率使得模型达到较好拟合。**该文章被SCIⅢ区《Energies》录用**  
 3. [故障分类泛化模型](https://github.com/Code-ZYJ/AI-project/tree/main/%E6%95%85%E9%9A%9C%E5%88%86%E7%B1%BB%E6%B3%9B%E5%8C%96%E6%A8%A1%E5%9E%8B)  
-  这是近期科研相关的研究，概括之，是一个多任务多分类的应用。根据对`Transformer模型`中`Encoder`部分进行参数与模型的部分更改，使其更能使用与FRA(频率响应法)数据相结合。利用硬共享方式与下层任务输出模型相连接。下层输出模型使用`TimDistributed`层对上层输出进行解码(NLP任务中通常对初始维度解码，后来我发现过拟合严重，才转用这种方式)，然后根据目标标签不同设置输出层。训练时使用梯度自调节，`Checkpoints`等方法……
+  这是近期科研相关的研究，概括之，是一个多任务多分类的应用。根据对`Transformer模型`中`Encoder`部分进行参数与模型的部分更改，使其更能使用与FRA(频率响应法)数据相结合。利用硬共享方式与下层任务输出模型相连接。下层输出模型使用`TimDistributed`层对上层输出进行解码(NLP任务中通常对初始维度解码，后来我发现过拟合严重，才转用这种方式)，然后根据目标标签不同设置输出层。训练时使用梯度自调节，`Checkpoints`等方法……目前文章在**SCIⅡ区期刊《INTERNATIONAL JOURNAL OF ELECTRICAL POWER & ENERGY SYSTEMS》审稿中**
   
 ### [竞赛](https://github.com/Code-ZYJ/AI-project/tree/main/%E7%AB%9E%E8%B5%9B)
 1. [公积金逾期预测](https://github.com/Code-ZYJ/AI-project/tree/main/%E7%AB%9E%E8%B5%9B/%E5%85%AC%E7%A7%AF%E9%87%91%E9%80%BE%E6%9C%9F%E9%A2%84%E6%B5%8B)  
@@ -23,7 +23,7 @@
 3. [螺母螺栓参评质量检测](https://github.com/Code-ZYJ/AI-project/tree/main/%E7%AB%9E%E8%B5%9B/%E8%9E%BA%E6%AF%8D%E8%9E%BA%E6%A0%93%E5%8F%82%E8%AF%84%E8%B4%A8%E9%87%8F%E6%A3%80%E6%B5%8B)  
   这个项目时对螺母螺栓图片的二分类。我用`VGG19`的卷积基做迁移学习省时省力，效果还不错。  
 4. [NLP中文预训练模型泛化能力挑战赛](https://github.com/Code-ZYJ/AI-project/tree/main/%E7%AB%9E%E8%B5%9B/%E5%A4%A9%E6%B1%A0%E6%B3%9B%E5%8C%96%E6%A8%A1%E5%9E%8B%E9%A2%84%E8%AE%AD%E7%BB%83)  
-  详细内容正在完善中······
+  这是一个利用多任务多分类(MTL)的训练方式获得泛化模型的项目，选用bert预训练模型进行泛化模型。利用情感温习，文本分类，关系抽取三个任务对泛化模型进行训练，训练过程中通过设定权重解决样本不均衡带来的影响。最终以三个任务的`macro-f1-socre`的平均值作为衡量泛化模型优异与否的指标。
   
 ### NLP相关  
 1. [奶茶店自动起名](https://github.com/Code-ZYJ/AI-project/tree/main/GAN%E6%80%9D%E6%83%B3%E5%AE%9E%E7%8E%B0%E5%A5%B6%E8%8C%B6%E5%BA%97%E8%B5%B7%E5%90%8D)  
