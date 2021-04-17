@@ -33,6 +33,8 @@
   [情感分析](https://github.com/Code-ZYJ/AI-project/tree/main/%E6%96%87%E6%9C%AC%E5%88%86%E7%B1%BB%20%26%20%E6%83%85%E6%84%9F%E5%88%86%E6%9E%90/%E6%83%85%E6%84%9F%E5%88%86%E6%9E%90)中对IMDB-50k的影评数据集
 利用`huggingface`的`Transformers`调用`Bert`预训练模型实现二分类。  
 3. [对word2vec模型的归纳](https://github.com/Code-ZYJ/AI-project/tree/main/word2vec)  
-  对B站上的`word2vec`模型的讲解进行了归纳总结，并给出了[对模型的看法与理解](https://mp.weixin.qq.com/s?__biz=Mzg5ODU1NDQ3OQ==&mid=2247483750&idx=1&sn=cb69c7568865b5dbd38098a966eef36a&chksm=c0618e66f7160770dd136038ba1c08c149d4caa6c9ca9a9dc319e73b19e40cea665dd7cb2a08&token=1138451613&lang=zh_CN#rd)
-4. [seq2seq(Attention)](https://github.com/Code-ZYJ/AI-project/tree/main/seq2seq(Attention)%20%E5%BE%B7%E8%AF%AD---%E3%80%8B%E8%8B%B1%E8%AF%AD)  
+  对B站上的`word2vec`模型的讲解进行了归纳总结，并给出了[对模型的看法与理解](https://mp.weixin.qq.com/s?__biz=Mzg5ODU1NDQ3OQ==&mid=2247483750&idx=1&sn=cb69c7568865b5dbd38098a966eef36a&chksm=c0618e66f7160770dd136038ba1c08c149d4caa6c9ca9a9dc319e73b19e40cea665dd7cb2a08&token=1138451613&lang=zh_CN#rd)  
+4. [机器翻译](https://github.com/Code-ZYJ/AI-project/tree/main/%E6%9C%BA%E5%99%A8%E7%BF%BB%E8%AF%91)  
+  英语->中文 的翻译。从原始语料的整理，构建词表，word2vec的训练(代替embedding)再到模型的搭建和训练。虽然最后的结果不太好，个人觉得原因在于同步的seq2seq模型对于翻译而言还是不够给力，另外训练过程中在`Deocder`部分中我没有给定`dec_input`导致训练难拟合，这也是在意料之中。
+5. [seq2seq(Attention)](https://github.com/Code-ZYJ/AI-project/tree/main/seq2seq(Attention)%20%E5%BE%B7%E8%AF%AD---%E3%80%8B%E8%8B%B1%E8%AF%AD)  
   对异步序列到序列模型的整体流程，由内到外，由表及里进行了全面的剖析，从各分模型的输入输出，到各模型的内部数据流，再到训练异步训练过程给出了[详细的解析](https://mp.weixin.qq.com/s?__biz=Mzg5ODU1NDQ3OQ==&mid=2247483781&idx=1&sn=bbfef8670ce24b3c271003dc71ea3641&chksm=c0618e85f7160793cf7b6e855161ca8ddc95120f0c1c1e6968b9c7e5338c03d128b92475ba84&token=1138451613&lang=zh_CN#rd)  
