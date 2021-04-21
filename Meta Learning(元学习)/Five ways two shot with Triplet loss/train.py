@@ -66,14 +66,15 @@ class Siamese_network(nn.Module):
         return anchor_out, x_pos_out,x_neg_out
 
 #%% 训练
+
 model = Siamese_network().to(device)
 margin = 4
 loss_fn = nn.TripletMarginLoss(margin = margin)
 
-epochs = 50
-optim = torch.optim.Adam(model.parameters(),lr = 1e-3)
-
+epochs = 100
+optim = torch.optim.RMSprop(model.parameters(),lr = 1e-4)
 learning_curve = []
+
 for epoch in range(epochs):
     LOSS = 0
     for anchor, x_pos, x_neg in dl:
@@ -87,16 +88,18 @@ for epoch in range(epochs):
         optim.step()
         optim.zero_grad()
         with torch.no_grad():
-            LOSS+=loss
+            LOSS += loss
     print('epoch: {} -------- loss: {}'.format(epoch+1, LOSS))
     learning_curve.append(LOSS)
+    if LOSS == 0:
+        break
 
-torch.save(model,'Siamese_network.pt')
+#%% 可视化
 with torch.no_grad():
     sample_anchor = anchor_out.cpu().numpy()
     sample_pos = x_pos_out.cpu().numpy()
     sample_neg = x_neg_out.cpu().numpy()
-#%% 可视化
+
 import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
