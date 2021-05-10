@@ -14,7 +14,7 @@ cn = [jieba.lcut(i.strip('\n')) for i in cn]
 #%% 构建词表
 
 #英文词表
-special_token = [['<PAD>','<S>','<E>','<UNK>']]
+special_token = [['<PAD>','<UNK>']]
 dct_en = Dictionary(special_token)
 dct_en.add_documents(en)
 vocab_en = dct_en.token2id
@@ -23,8 +23,10 @@ with open('./word2vec/vocab_en.json', 'w', encoding='utf-8') as f:
     json.dump(vocab_en,f,ensure_ascii=False)
 
 #中文词表
-special_token = [['<PAD>','<S>','<E>','<UNK>']]
+special_token = [['<PAD>','<UNK>']]
+special_token_ = [['<S>','<E>']]
 dct_cn = Dictionary(special_token)
+dct_cn.add_documents((special_token_))
 dct_cn.add_documents((cn))
 vocab_cn = dct_cn.token2id
 print('中文词表长度：',len(vocab_cn))
@@ -125,9 +127,9 @@ def train(model,epochs=5):
 
 
 if __name__ == '__main__':
-    model_en = Word2Vec(vocab_en,idxs_en,768,batch_size=512)
-    model_en = train(model_en)
-    torch.save(model_en,'./word2vec/word_embedding_en.pt')
+    #model_en = Word2Vec(vocab_en,idxs_en,768,batch_size=512)
+    #model_en = train(model_en)
+    #torch.save(model_en,'./word2vec/word_embedding_en.pt')
 
     model_cn = Word2Vec(vocab_en,idxs_en,768,batch_size=512)
     model_cn = train(model_cn)

@@ -1,16 +1,14 @@
 import torch
 from torch import nn
 from torch.utils.data import TensorDataset,DataLoader
-from train.model import Seq2Seq
+from train.model import Transformer,PositionalEncoding
 import json
 from tqdm import tqdm
 import numpy as np
-from word2vec.main import Word2Vec
+import math
+#from word2vec.main import Word2Vec
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-
-embedding_en = torch.load('./word2vec/word_embedding_en.pt')  #载入训练好的embedding
-embedding_cn = torch.load('./word2vec/word_embedding_cn.pt')   # 中文的感觉没必要引入
 
 with open('./word2vec/vocab_en.json','r',encoding='utf-8') as f:  #中文词表
     vocab_en = json.load(f)
@@ -20,86 +18,162 @@ with open('./word2vec/vocab_cn_reverse.json','r',encoding='utf-8') as f:
     vocab_cn_reverse = json.load(f)
 
 # 数据集
-dataset_en = torch.load('./dataset/tokenizer_en.pkl')
-dataset_cn = torch.load('./dataset/tokenizer_cn.pkl')
+enc_input = torch.load('./dataset/enc_input.pkl')
+dec_input = torch.load('./dataset/dec_input.pkl')
+dec_output = torch.load('./dataset/dec_output.pkl')
+enc_input = enc_input[:100]
+dec_input = dec_input[:100]
+dec_output = dec_output[:100]
 
 # 批处理封装
-batch_size = 12
-dataset = TensorDataset(dataset_en,dataset_cn)
+batch_size = 5
+dataset = TensorDataset(enc_input, dec_input, dec_output)
 dataset = DataLoader(dataset,batch_size=batch_size,drop_last=True)
 
 
 
+class Transformer(nn.Module):
+    def __init__(self,d_model):
+        super(Transformer, self).__init__()
+        self.emb_en = nn.Embedding(len(vocab_en), d_model)
+        self.emb_cn = nn.Embedding(len(vocab_en), d_model)
+        self.posemb = PositionalEncoding(d_model=d_model, dropout=0)
+        self.enclayer = nn.TransformerEncoderLayer(d_model=d_model, nhead=8)
+        self.declayer = nn.TransformerDecoderLayer(d_model=d_model, nhead=8)
+        self.encoder = nn.TransformerEncoder(self.enclayer, num_layers=6)
+        self.decoder = nn.TransformerDecoder(self.declayer, num_layers=6)
+        self.output = nn.Linear(d_model, len(vocab_cn))
+    def forward(self, enc_input, dec_input):
+        enc_input = self.emb_en(enc_input)    # enc_input: [batch, src_len, d_model]
+        dec_input = self.emb_cn(dec_input)    # dec_input: [batch, tgt_len, d_model]
+        enc_input = self.posemb(enc_input.transpose(0,1))  # enc_input: [src_len, batch, d_model]
+        dec_input = self.posemb(dec_input.transpose(0,1))  # dec_input: [tgt_len, batch, d_model]
+        memory = self.encoder(enc_input)      # memory: [src_len, batch, d_model]
+        dec_output = self.decoder(dec_input, memory)    # dec_output: [tgt_len, batch, d_model]
+        out = self.output(dec_output.transpose(0,1))
+        return out
+    def get_memory(self,enc_input):
+        enc_input = self.emb_en(enc_input)
+        enc_input = self.posemb(enc_input.transpose(0, 1))
+        memory = self.encoder(enc_input)
+        return memory
 
+#%% 训练
+model = Transformer(512).to(device)
+loss_fn = nn.CrossEntropyLoss()
+optim = torch.optim.Adam(model.parameters(),lr=2e-5)
+LOSS=[]
 
+for epoch in range(1000):
+    for enc_input,dec_input,dec_output in tqdm(dataset):
+        enc_input = enc_input.to(device)
+        dec_input = dec_input.to(device)
+        dec_output = dec_output.to(device)
 
+        out = model(enc_input,dec_input)
 
-def train(model,dataset,epochs,batch_size,device,embedding_dim = 768, max_len_cn = 82):
-    loss_fn = nn.CrossEntropyLoss()
-    optim = torch.optim.Adam(model.parameters(),lr=1e-3)
-    dec_input = torch.zeros(batch_size, max_len_cn, embedding_dim).to(device)     #用于每次的decoder部分
-    for epoch in range(epochs):
-        for en,cn in tqdm(dataset):
-            en = en.to(device)
-            cn = cn.to(device)
-            pred = model(en,dec_input)
-            #计算损失
-            loss = 0
-            for i in range(max_len_cn):
-                loss += loss_fn(pred[:,i,:], cn[:,i])
-            optim.zero_grad()
-            loss.backward()
-            optim.step()
-    return model
-
-
-embedding_dim = 768
-rnn_unit = 128
-len_vocab_en = len(vocab_cn)
-model = Seq2Seq(rnn_unit, embedding_en, len_vocab_en).to(device)
-max_len_cn = 82
-
-model = train(model,dataset,10,batch_size=batch_size,device=device)
+        loss=0
+        for i in range(batch_size):
+            if 0 in dec_output:
+                index = dec_output[i].argmin()
+                loss += loss_fn(out[i,:index+1],dec_output[i,:index+1])
+            else:
+                loss += loss_fn(out[i],dec_output[i])
+        #loss/=batch_size
+        loss.backward()
+        optim.step()
+        optim.zero_grad()
+        with torch.no_grad():
+            LOSS.append(loss.cpu())
+    print('epo:{}---loss:{:4f}'.format(epoch,loss/batch_size))
 
 
 
 
 #%% 测试
-def predict(model,texts):
-    max_len_en = 60
-    max_len_cn = 80
-    embedding_dim = 768
-    #***************进行tokenizer****************
-    words = [text.split() for text in texts]
-    idxs=[]
-    for word in words:
-        idxs.append([vocab_en[w] for w in word])
-    inputs_idxs = np.zeros((len(idxs),max_len_en+2))
-    inputs_idxs[:,0] = vocab_en['<S>']
-    for i in range(len(idxs)):
-        if len(idxs[i]) < max_len_en:
-            inputs_idxs[i][1:len(idxs[i])+1] = idxs[i]
-            inputs_idxs[i][len(idxs[i])+1] = vocab_en['<E>']
-        if len(idxs[i]) > max_len_en:
-            inputs_idxs[i][1:61] = idxs[i][:60]
-            inputs_idxs[i][61] = vocab_en['<E>']
-    # *******************************************
-    input = torch.from_numpy(inputs_idxs).type(torch.long)
-    dec_input = torch.zeros(len(input), max_len_cn+2, embedding_dim)
-    out = model.cpu()(input, dec_input)
+
+def greedy_decoder(memory):    # memory: [src_len, batch, d_model]
+    start_symbol = vocab_cn['<S>']
+    dec_input = torch.zeros((1, 81)).type(torch.LongTensor).to(device)
+    next_symbol = start_symbol
+    for i in range(dec_input.size(1)-1):
+        dec_input[0][i] = next_symbol
+        dec_output = model.decoder(model.posemb(model.emb_cn(dec_input).transpose(0,1)),memory)
+        prob = model.output(dec_output)
+        prob = torch.argmax(prob,dim=-1)
+        next_word = prob.data[i]
+        next_symbol = next_word.item()
+    return dec_input.type(torch.LongTensor)
+
+
+
+def predict(texts):
+    model.eval()
+    texts = texts.split(' ')
+    idxs_en = [vocab_en[text] for text in texts]
+    enc_input = np.zeros((1,60))
+    try:
+        enc_input[:,:len(idxs_en)] = idxs_en
+    except:
+        print('请将输入的词语控制在60以内')
+    enc_input = torch.from_numpy(enc_input).type(torch.LongTensor).to(device)
+    memory = model.get_memory(enc_input)
+    dec_input = greedy_decoder(memory).to(device)
+    out = model(enc_input,dec_input).squeeze(0)
     out = torch.argmax(out,dim=-1)
-    out = np.array(out)
-    trans_outs = []
-    for mini_batch in out:
-        trans_outs.append([vocab_cn_reverse[str(idx)] for idx in mini_batch])
-    chinese = []
-    for trans_out in trans_outs:
-        if '<E>' in trans_out:
-            chinese.append(''.join(trans_out[trans_out.index('<S>')+1: trans_out.index('<E>')]))
+    with torch.no_grad():
+        out = out.cpu()
+    res = [vocab_cn_reverse[str(o)] for o in out.numpy()]
+    return ''.join(res)
+
+
+
+texts = 'PARIS'
+predict(texts)
+
+
+
+
+
+#%% 自己用来测试的
+
+for i in range(1):
+    for enc_input,dec_input,dec_output in tqdm(dataset):
+        enc_input = enc_input.to(device)
+        dec_input = dec_input.to(device)
+        dec_output = dec_output.to(device)
+
+
+for epo in range(270):
+    out = model(enc_input, dec_input)
+    loss = 0
+    '''
+    for i in range(batch_size):
+        if 0 in dec_output:
+            index = dec_output[i].argmin()
+            loss += loss_fn(out[i, :index + 1], dec_output[i, :index + 1])
         else:
-            chinese.append(''.join(trans_out[trans_out.index('<S>')+1:]))
-    return chinese
+            loss += loss_fn(out[i], dec_output[i])
+    '''
+    for i in range(2):
+            loss += loss_fn(out[i], dec_output[i])
+
+    loss.backward()
+    optim.step()
+    optim.zero_grad()
+    with torch.no_grad():
+        LOSS.append(loss)
+        print('epoch',epo,'loss',loss/batch_size)
 
 
-texts = ['PARIS']
-predict(model,texts)
+
+with torch.no_grad():
+    real_out = dec_output.cpu()
+    ans = torch.argmax(out[0],dim=-1).cpu()
+real_out = np.array(real_out)
+ans = np.array(ans)
+print(''.join([vocab_cn_reverse[str(i)] for i in real_out[0]]))
+print(''.join([vocab_cn_reverse[str(i)] for i in ans]))
+
+for i in range(batch_size):
+    print(''.join([vocab_cn_reverse[str(i)] for i in real_out[i]]))

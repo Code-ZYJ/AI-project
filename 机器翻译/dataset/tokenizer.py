@@ -33,31 +33,43 @@ for i in range(len(en)):
     idxs_en.append(idx_en)
     idxs_cn.append(idx_cn)
 
-tokenizer_en = np.zeros((len(en),max_len_en + 2))
-tokenizer_cn = np.zeros((len(en),max_len_cn + 2))
-tokenizer_en[:,0] = vocab_en['<S>']
-tokenizer_cn[:,0] = vocab_cn['<S>']
+enc_input = np.zeros((len(en),max_len_en))
+dec_input = np.zeros((len(cn),max_len_cn + 1))
+dec_output= np.zeros((len(cn),max_len_cn + 1))
 
-#构建英文的 tokenizer
+dec_input[:,0] = vocab_cn['<S>']
+
+#构建英文的 enc_input
 for i in range(len(en)):
     if len(idxs_en[i])<max_len_en:
-        tokenizer_en[i][1:len(idxs_en[i])] = idxs_en[i][:len(idxs_en[i])-1]
-        tokenizer_en[i][len(idxs_en[i])] = vocab_en['<E>']     #末尾加 '<E>'
+        enc_input[i][:len(idxs_en[i])] = idxs_en[i][:len(idxs_en[i])]
     else:
-        tokenizer_en[i][1:max_len_en] = idxs_en[i][:max_len_en-1]
-        tokenizer_en[i][max_len_en-1] = vocab_en['<E>']
+        enc_input[i] = idxs_en[i][:max_len_en]
 
-#构建中文的 tokenizer
+#构建中文的 dec_input
 for i in range(len(cn)):
     if len(idxs_cn[i])<max_len_cn:
-        tokenizer_cn[i][1:len(idxs_cn[i])] = idxs_cn[i][:len(idxs_cn[i])-1]
-        tokenizer_cn[i][len(idxs_cn[i])] = vocab_cn['<E>']
+        dec_input[i][1:len(idxs_cn[i])] = idxs_cn[i][:len(idxs_cn[i])-1]
     else:
-        tokenizer_cn[i][1:max_len_cn] = idxs_cn[i][:max_len_cn-1]
-        tokenizer_cn[i][max_len_cn-1] = vocab_cn['<E>']
+        dec_input[i][1:max_len_cn] = idxs_cn[i][1:max_len_cn]
 
-tokenizer_en = torch.from_numpy(tokenizer_en).type(torch.LongTensor)
-tokenizer_cn = torch.from_numpy(tokenizer_cn).type(torch.LongTensor)
+#构建中文的 dec_output
+for i in range(len(cn)):
+    if len(idxs_cn[i])<max_len_cn:
+        dec_output[i][:len(idxs_cn[i])] = idxs_cn[i][:len(idxs_cn[i])]
+        dec_output[i][len(idxs_cn[i])] = vocab_cn['<E>']
+    else:
+        dec_output[i][1:max_len_cn] = idxs_cn[i][1:max_len_cn]
+        dec_output[i][-1] = vocab_cn['<E>']
 
-torch.save(tokenizer_en, './dataset/tokenizer_en.pkl')
-torch.save(tokenizer_cn, './dataset/tokenizer_cn.pkl')
+enc_input = np.array(enc_input)
+dec_input = np.array(dec_input)
+dec_output = np.array(dec_output)
+
+enc_input = torch.from_numpy(enc_input).type(torch.LongTensor)
+dec_input = torch.from_numpy(dec_input).type(torch.LongTensor)
+dec_output = torch.from_numpy(dec_output).type(torch.LongTensor)
+
+torch.save(enc_input, './dataset/enc_input.pkl')
+torch.save(dec_input, './dataset/dec_input.pkl')
+torch.save(dec_output, './dataset/dec_output.pkl')

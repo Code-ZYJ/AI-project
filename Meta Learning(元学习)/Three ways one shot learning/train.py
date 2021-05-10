@@ -83,3 +83,20 @@ print(model(ma.to(device),ma.to(device)))
 print(model(dl.to(device),dl.to(device)))
 
 torch.save(model,'sia_net.pt')
+
+
+#%% 权重可视化
+import matplotlib.pyplot as plt
+weight = []
+for i in model.parameters():
+    with torch.no_grad():
+        i = i.cpu().numpy()
+    print(i.shape)
+    weight.append(i)
+
+conv1 = weight[0].reshape(-1,5,5)
+conv2 = weight[2].reshape(-1,5,5)
+
+for i in range(len(conv2)):
+    plt.imshow(conv1[i],cmap='gray')
+    plt.show()
