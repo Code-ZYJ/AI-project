@@ -41,6 +41,6 @@
   
 ### [小样本](https://github.com/Code-ZYJ/AI-project/tree/main/Meta%20Learning(%E5%85%83%E5%AD%A6%E4%B9%A0)/3%20ways%20one%20shot%20learning)  
 1. [three ways one shots](https://github.com/Code-ZYJ/AI-project/tree/main/Meta%20Learning(%E5%85%83%E5%AD%A6%E4%B9%A0)/Three%20ways%20one%20shot%20learning)  
-  三个类别，每个类别一个样本。模型为Conv-Siamese网络。两个类别图像输入到模型中进行比较。用`Sigmoid`激活函数输出两个类别的相似度。1为最相似，0为最不相似。  
+  三个类别，每个类别一个样本。模型为Conv-Siamese网络。两个类别图像输入到模型中进行比较。用`Sigmoid`激活函数输出两个类别的相似度。1为最相似，0为最不相似。    
 2.[Five ways two shot with Triplet loss](https://github.com/Code-ZYJ/AI-project/tree/main/Meta%20Learning(%E5%85%83%E5%AD%A6%E4%B9%A0)/Five%20ways%20two%20shot%20with%20Triplet%20loss)  
   五个类别，每个类别两个 样本，模型同样为Conv-Siamese网络。输入分别为`Anchor`、`x_pos`和`x_neg`。损失函数为`TripletMarginLoss`输出三个样本的向量。预测时，遍历所有类别，找到与被测图像最相似的类别，判断被测图像的类别。
