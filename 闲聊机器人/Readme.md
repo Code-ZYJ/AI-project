@@ -11,4 +11,4 @@
 # `predict.py`
 这个函数加载了 `2. 训练.py` 训练的模型和 `1.语料处理.py` 的词表。对前面的模型和函数重新加载了一遍。然后用死循环实现不停的对话。
 结果如下：
-![](https://github.com/Code-ZYJ/AI-project/blob/main/%E9%97%B2%E8%81%8A%E6%9C%BA%E5%99%A8%E4%BA%BA/%E7%BB%93%E6%9E%9C.jpg)
+![结果.jpg](https://github.com/Code-ZYJ/AI-project/blob/main/%E9%97%B2%E8%81%8A%E6%9C%BA%E5%99%A8%E4%BA%BA/%E7%BB%93%E6%9E%9C.jpg)
