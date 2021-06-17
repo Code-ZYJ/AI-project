@@ -28,17 +28,19 @@
   2021年电工杯B题。在《东方财富网》上搜索必要信息(各公司总股本与流通股本)对板块指数建模并根据流通盘变化对模型修正。根据已有板块指数走势，获得其单步预测模型(50个工作日预测后一个工作日)；拟定6月的股票购买计划等。本人负责全部编程及部分写作任务。
   
 ### NLP相关  
-1. [奶茶店自动起名](https://github.com/Code-ZYJ/AI-project/tree/main/GAN%E6%80%9D%E6%83%B3%E5%AE%9E%E7%8E%B0%E5%A5%B6%E8%8C%B6%E5%BA%97%E8%B5%B7%E5%90%8D)  
+1. [机器翻译](https://github.com/Code-ZYJ/AI-project/tree/main/%E6%9C%BA%E5%99%A8%E7%BF%BB%E8%AF%91)  
+  英语->中文 的翻译。从原始语料的整理，构建词表，word2vec的训练(代替embedding)再到模型的搭建和训练。后来把模型替换成了Transformer。预测部分利用`greedy_decoder`进行异步预测  
+2. [闲聊对话机器人](https://github.com/Code-ZYJ/AI-project/tree/main/%E9%97%B2%E8%81%8A%E6%9C%BA%E5%99%A8%E4%BA%BA)  
+  语料是从一个CSDN上找到的 7k 个数据的json文件。工作包含提取对话数据、构建词表及数据集、搭建模型、训练、循环预测。模型选择`Transomer`类似于`机器翻译`的模型。模型总共训练了70次，效果尚可。
+3. [奶茶店自动起名](https://github.com/Code-ZYJ/AI-project/tree/main/GAN%E6%80%9D%E6%83%B3%E5%AE%9E%E7%8E%B0%E5%A5%B6%E8%8C%B6%E5%BA%97%E8%B5%B7%E5%90%8D)  
   对语料预处理、`GAN`以及文本生成的有一定的了解之后，我基于`Pytorch`实现了一个奶茶店自动起名的一个小案例。从百度上搜索到的奶茶店名利用`GAN`的思想和训练方式，结合文本生成方法实现了奶茶自动起名的案例。但由于预处理中未设置`CLS`标签，使得结果并不是很理想。  
-2. [文本分类 & 情感分析](https://github.com/Code-ZYJ/AI-project/tree/main/%E6%96%87%E6%9C%AC%E5%88%86%E7%B1%BB%20%26%20%E6%83%85%E6%84%9F%E5%88%86%E6%9E%90)  
+4. [文本分类 & 情感分析](https://github.com/Code-ZYJ/AI-project/tree/main/%E6%96%87%E6%9C%AC%E5%88%86%E7%B1%BB%20%26%20%E6%83%85%E6%84%9F%E5%88%86%E6%9E%90)  
   [文本分类](https://github.com/Code-ZYJ/AI-project/tree/main/%E6%96%87%E6%9C%AC%E5%88%86%E7%B1%BB%20%26%20%E6%83%85%E6%84%9F%E5%88%86%E6%9E%90/%E6%96%87%E6%9C%AC%E5%88%86%E7%B1%BB)中分别利用`CNN`、`LSTM`对`Tweets.csv`数据集做多分类(10分类)。对Youtube上基于`Pytorch`的`TextCNN`改写成`Tensorflow`实现。  
   [情感分析](https://github.com/Code-ZYJ/AI-project/tree/main/%E6%96%87%E6%9C%AC%E5%88%86%E7%B1%BB%20%26%20%E6%83%85%E6%84%9F%E5%88%86%E6%9E%90/%E6%83%85%E6%84%9F%E5%88%86%E6%9E%90)中对IMDB-50k的影评数据集
 利用`huggingface`的`Transformers`调用`Bert`预训练模型实现二分类。  
-3. [对word2vec模型的归纳](https://github.com/Code-ZYJ/AI-project/tree/main/word2vec)  
+5. [对word2vec模型的归纳](https://github.com/Code-ZYJ/AI-project/tree/main/word2vec)  
   对B站上的`word2vec`模型的讲解进行了归纳总结，并给出了[对模型的看法与理解](https://mp.weixin.qq.com/s?__biz=Mzg5ODU1NDQ3OQ==&mid=2247483750&idx=1&sn=cb69c7568865b5dbd38098a966eef36a&chksm=c0618e66f7160770dd136038ba1c08c149d4caa6c9ca9a9dc319e73b19e40cea665dd7cb2a08&token=1138451613&lang=zh_CN#rd)  
-4. [机器翻译](https://github.com/Code-ZYJ/AI-project/tree/main/%E6%9C%BA%E5%99%A8%E7%BF%BB%E8%AF%91)  
-  英语->中文 的翻译。从原始语料的整理，构建词表，word2vec的训练(代替embedding)再到模型的搭建和训练。后来把模型替换成了Transformer。预测部分利用`greedy_decoder`进行异步预测
-5. [seq2seq(Attention)](https://github.com/Code-ZYJ/AI-project/tree/main/seq2seq(Attention)%20%E5%BE%B7%E8%AF%AD---%E3%80%8B%E8%8B%B1%E8%AF%AD)  
+6. [seq2seq(Attention)](https://github.com/Code-ZYJ/AI-project/tree/main/seq2seq(Attention)%20%E5%BE%B7%E8%AF%AD---%E3%80%8B%E8%8B%B1%E8%AF%AD)  
   对异步序列到序列模型的整体流程，由内到外，由表及里进行了全面的剖析，从各分模型的输入输出，到各模型的内部数据流，再到训练异步训练过程给出了[详细的解析](https://mp.weixin.qq.com/s?__biz=Mzg5ODU1NDQ3OQ==&mid=2247483781&idx=1&sn=bbfef8670ce24b3c271003dc71ea3641&chksm=c0618e85f7160793cf7b6e855161ca8ddc95120f0c1c1e6968b9c7e5338c03d128b92475ba84&token=1138451613&lang=zh_CN#rd)  
   
 ### [小样本](https://github.com/Code-ZYJ/AI-project/tree/main/Meta%20Learning(%E5%85%83%E5%AD%A6%E4%B9%A0)/3%20ways%20one%20shot%20learning)  
